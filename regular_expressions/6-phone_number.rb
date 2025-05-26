@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-# File: 4-repetition_token_3.rb
+# File: 6-phone_number.rb
 
 # Get the first argument passed to the script
 input = ARGV[0]
@@ -10,6 +10,6 @@ if input.nil?
   exit
 end
 
-# Use scan to find all occurrences of "hbt{1,}n" and join them
-matches = input.scan(/hbt*{1,}n/).join
+# Use scan to find all occurrences of "^\d{10}$" and join them
+matches = input.scan(/^\d{10}$/).join
 puts matches
