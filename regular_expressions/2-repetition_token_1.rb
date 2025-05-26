@@ -10,6 +10,6 @@ if input.nil?
   exit
 end
 
-# Use scan to find all occurrences of "h(b*)tn" and join them
-matches = input.scan(/h(b*)tn/).join
+# Use scan to find all occurrences of "hb?t?n" and join them
+matches = input.scan(/hb?t?n/).join
 puts matches
