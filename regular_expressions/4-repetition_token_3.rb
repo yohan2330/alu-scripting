@@ -11,5 +11,5 @@ if input.nil?
 end
 
 # Use scan to find all occurrences of "hbt{1,5}n" and join them
-matches = input.scan(/hbt{1,5}n/).join
+matches = input.scan(/hbt{0,5}n/).join
 puts matches
