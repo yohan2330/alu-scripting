@@ -1,49 +1,36 @@
 #!/usr/bin/python3
 """
-This module retrieves an employee's TODO list progress from a REST API
-and exports it to a JSON file in the specified format.
+This module provides a function to query the Reddit API and retrieve
+the number of subscribers for a specified subreddit.
 """
-import json
 import requests
-import sys
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: {} <employee_id>".format(sys.argv[0]))
-        sys.exit(1)
-
-    employee_id = sys.argv[1]
+def number_of_subscribers(subreddit):
+    """
+    Queries the Reddit API and returns the number of subscribers for a subreddit.
     
-    # Fetch employee data
-    user_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}"
-    user_response = requests.get(user_url)
-    
-    if user_response.status_code != 200:
-        print("User not found")
-        sys.exit(1)
+    Args:
+        subreddit (str): The name of the subreddit to query
         
-    user_data = user_response.json()
-    username = user_data.get('username')
+    Returns:
+        int: Number of subscribers, or 0 if subreddit is invalid
+    """
+    # Set custom User-Agent to avoid Too Many Requests error
+    headers = {'User-Agent': 'Mozilla/5.0 (compatible; MyRedditBot/0.1; +http://localhost)'}
     
-    # Fetch TODO list
-    todos_url = f"https://jsonplaceholder.typicode.com/users/{employee_id}/todos"
-    todos_response = requests.get(todos_url)
-    todos = todos_response.json()
+    # Construct URL for subreddit about info
+    url = f"https://www.reddit.com/r/{subreddit}/about.json"
     
-    # Prepare data for JSON
-    tasks = [
-        {
-            "task": task.get('title'),
-            "completed": task.get('completed'),
-            "username": username
-        }
-        for task in todos
-    ]
-    
-    # Create JSON structure
-    json_data = {employee_id: tasks}
-    
-    # Write to JSON file
-    filename = f"{employee_id}.json"
-    with open(filename, 'w') as f:
-        json.dump(json_data, f)
+    try:
+        # Make GET request without following redirects
+        response = requests.get(url, headers=headers, allow_redirects=False)
+        
+        # Check if response is successful and not a redirect
+        if response.status_code == 200:
+            data = response.json()
+            # Return subscriber count from data
+            return data.get('data', {}).get('subscribers', 0)
+        else:
+            return 0
+    except requests.RequestException:
+        return 0
